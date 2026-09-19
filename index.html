@@ -1,200 +1,639 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<meta name="theme-color" content="#0a0a0f" />
-<title>Astra</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a1526">
+<meta name="referrer" content="origin">
+<title>Astra | دوره‌های آموزش ریاضی</title>
+
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='26' fill='%230a1526'/%3E%3Cpath d='M50 16l8 26 26 8-26 8-8 26-8-26-26-8 26-8z' fill='%2338bdf8'/%3E%3C/svg%3E">
+
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-  }
+/* ============ RESET & TOKENS ============ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
-  html, body {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #0a0a0f;
-    color: #fff;
-  }
+:root{
+  --navy:#0a1526;
+  --navy-2:#123253;
+  --blue:#1e5a7a;
+  --sky:#38bdf8;
+  --violet:#a78bfa;
+  --gold:#facc15;
+  --ink:#0b1729;
+  --muted:#64748b;
+  --line:rgba(15,40,70,.10);
+  --radius:24px;
+  --shadow-sm:0 1px 2px rgba(10,25,45,.05), 0 8px 20px -12px rgba(10,25,45,.22);
+  --shadow-md:0 18px 40px -20px rgba(10,25,45,.35);
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
 
-  /* ===== صفحه لودینگ ===== */
-  #loader {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    background: radial-gradient(circle at 50% 40%, #13131f 0%, #0a0a0f 70%);
-    z-index: 999;
-    transition: opacity 0.8s ease, visibility 0.8s ease;
-    padding: 20px;
-  }
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 
-  #loader.hide {
-    opacity: 0;
-    visibility: hidden;
-  }
+body{
+  font-family:'Vazir',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  background:
+    radial-gradient(900px 520px at 100% -8%, #dbeafe 0%, transparent 62%),
+    radial-gradient(760px 480px at -12% 22%, #e0f2fe 0%, transparent 58%),
+    #f6f9fd;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+body.is-loading{overflow:hidden}
 
-  /* اسپینر */
-  .spinner {
-    width: clamp(48px, 14vw, 72px);
-    height: clamp(48px, 14vw, 72px);
-    border-radius: 50%;
-    border: 3px solid rgba(255, 255, 255, 0.08);
-    border-top-color: #7c5cff;
-    border-right-color: #22d3ee;
-    animation: spin 1s linear infinite;
-    box-shadow: 0 0 30px rgba(124, 92, 255, 0.35);
-  }
+a{-webkit-tap-highlight-color:transparent}
 
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
+/* ============ PRELOADER ============ */
+.loader{
+  position:fixed;inset:0;z-index:9999;
+  display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 32%, #16305a 0%, #0a1526 55%, #050a12 100%);
+  transition:opacity .65s ease, visibility .65s ease;
+}
+.loader.hide{opacity:0;visibility:hidden}
 
-  /* متن لودینگ */
-  .loading-text {
-    font-size: clamp(16px, 5vw, 22px);
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    color: #cfcfff;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
+.loader-stars{
+  position:absolute;inset:0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 14% 24%,rgba(255,255,255,.85),transparent),
+    radial-gradient(1.2px 1.2px at 32% 72%,rgba(255,255,255,.6),transparent),
+    radial-gradient(1.7px 1.7px at 58% 16%,rgba(255,255,255,.8),transparent),
+    radial-gradient(1.3px 1.3px at 76% 62%,rgba(255,255,255,.6),transparent),
+    radial-gradient(1.5px 1.5px at 88% 30%,rgba(255,255,255,.75),transparent),
+    radial-gradient(1.2px 1.2px at 8% 84%,rgba(255,255,255,.55),transparent);
+  animation:twinkle 3.2s ease-in-out infinite alternate;
+}
+@keyframes twinkle{from{opacity:.3}to{opacity:.95}}
 
-  .loading-text .dots span {
-    display: inline-block;
-    animation: blink 1.4s infinite both;
-  }
-  .loading-text .dots span:nth-child(2) { animation-delay: 0.2s; }
-  .loading-text .dots span:nth-child(3) { animation-delay: 0.4s; }
+.loader-inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:20px}
 
-  @keyframes blink {
-    0%, 80%, 100% { opacity: 0.2; }
-    40% { opacity: 1; }
-  }
+.loader-mark{position:relative;width:104px;height:104px;display:grid;place-items:center}
 
-  /* نوار پیشرفت */
-  .progress-bar {
-    width: min(280px, 70vw);
-    height: 4px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 99px;
-    overflow: hidden;
-  }
+.loader-ring{
+  position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 0deg, rgba(56,189,248,0) 0%, #38bdf8 55%, #a78bfa 100%);
+  -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+  mask:radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+  animation:spin 1s linear infinite;
+}
+.loader-ring.rev{
+  inset:14px;
+  background:conic-gradient(from 180deg, rgba(250,204,21,0) 0%, #facc15 60%, rgba(250,204,21,0) 100%);
+  animation:spin 1.6s linear infinite reverse;
+  opacity:.75;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-  .progress-bar .fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #7c5cff, #22d3ee);
-    border-radius: 99px;
-    transition: width 0.3s ease;
-  }
+.loader-star{
+  width:40px;height:40px;
+  filter:drop-shadow(0 0 14px rgba(56,189,248,.9));
+  animation:pulse 1.7s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{transform:scale(.92);opacity:.85}
+  50%{transform:scale(1.06);opacity:1}
+}
 
-  /* ===== محتوای اصلی ===== */
-  #app {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 24px 20px;
-    text-align: center;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.9s ease, transform 0.9s ease;
-  }
+.loader-name{
+  font-size:2rem;font-weight:800;letter-spacing:.42em;
+  padding-inline-start:.42em;
+  background:linear-gradient(90deg,#e0f2fe,#38bdf8 45%,#a78bfa);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
 
-  #app.show {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.loader-bar{width:190px;height:4px;border-radius:99px;background:rgba(255,255,255,.09);overflow:hidden}
+.loader-bar span{
+  display:block;height:100%;width:42%;border-radius:99px;
+  background:linear-gradient(90deg,#38bdf8,#a78bfa);
+  animation:slide 1.15s ease-in-out infinite;
+}
+@keyframes slide{
+  0%{transform:translateX(-130%)}
+  100%{transform:translateX(340%)}
+}
 
-  #app h1 {
-    font-size: clamp(28px, 9vw, 48px);
-    font-weight: 700;
-    background: linear-gradient(135deg, #7c5cff, #22d3ee);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 16px;
-    letter-spacing: 1px;
-  }
+.loader-sub{font-size:.78rem;color:rgba(226,240,255,.55);letter-spacing:.02em}
 
-  #app p {
-    font-size: clamp(14px, 4.5vw, 18px);
-    line-height: 1.9;
-    color: #b8b8c8;
-    max-width: 480px;
-  }
+/* ============ PAGE ============ */
+.page{
+  opacity:0;transform:translateY(14px);
+  transition:opacity .7s ease, transform .7s var(--ease);
+}
+body.ready .page{opacity:1;transform:none}
 
-  /* برای گوشی‌های کوچک خیلی کم‌عرض */
-  @media (max-width: 340px) {
-    .loading-text { font-size: 15px; }
-  }
+/* ============ TOPBAR ============ */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  padding-top:env(safe-area-inset-top);
+  background:rgba(246,249,253,.78);
+  backdrop-filter:blur(18px) saturate(180%);
+  -webkit-backdrop-filter:blur(18px) saturate(180%);
+  border-bottom:1px solid rgba(15,40,70,.07);
+}
+.topbar-in{
+  max-width:1000px;margin:0 auto;
+  padding:10px 16px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand-mark{
+  width:38px;height:38px;flex:none;display:grid;place-items:center;
+  border-radius:13px;
+  background:linear-gradient(140deg,#0a1526,#1e5a7a);
+  box-shadow:0 6px 16px -8px rgba(30,90,122,.9);
+}
+.brand-mark svg{width:19px;height:19px;fill:var(--sky)}
+.brand-txt{display:flex;flex-direction:column;line-height:1.15}
+.brand-txt b{font-size:1.02rem;font-weight:800;letter-spacing:.02em}
+.brand-txt small{font-size:.65rem;color:var(--muted);font-weight:500}
+
+.top-badge{
+  font-size:.68rem;font-weight:700;color:#1e4a6e;
+  background:linear-gradient(140deg,#e0f2fe,#d9eaf7);
+  border:1px solid #c7e0f0;
+  padding:7px 13px;border-radius:99px;
+  white-space:nowrap;
+}
+
+/* ============ LAYOUT ============ */
+.wrap{
+  max-width:1000px;margin:0 auto;
+  padding:18px 16px calc(34px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;gap:22px;
+}
+
+/* ============ HERO ============ */
+.hero{
+  position:relative;overflow:hidden;isolation:isolate;
+  border-radius:26px;
+  padding:34px 20px 30px;
+  text-align:center;color:#fff;
+  background:linear-gradient(140deg,#0a1526 0%,#123253 48%,#1e5a7a 100%);
+  box-shadow:0 26px 55px -26px rgba(10,30,60,.65);
+}
+.hero-stars{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    radial-gradient(1.6px 1.6px at 12% 22%,rgba(255,255,255,.9),transparent),
+    radial-gradient(1.3px 1.3px at 27% 70%,rgba(255,255,255,.65),transparent),
+    radial-gradient(1.8px 1.8px at 45% 16%,rgba(255,255,255,.85),transparent),
+    radial-gradient(1.2px 1.2px at 63% 58%,rgba(255,255,255,.6),transparent),
+    radial-gradient(1.7px 1.7px at 79% 26%,rgba(255,255,255,.8),transparent),
+    radial-gradient(1.3px 1.3px at 90% 72%,rgba(255,255,255,.65),transparent),
+    radial-gradient(1.4px 1.4px at 6% 84%,rgba(255,255,255,.55),transparent);
+  animation:twinkle 3.6s ease-in-out infinite alternate;
+}
+.hero-glow{
+  position:absolute;z-index:0;pointer-events:none;
+  width:300px;height:300px;border-radius:50%;
+  top:-130px;inset-inline-end:-90px;
+  background:radial-gradient(circle,rgba(56,189,248,.42),transparent 66%);
+  filter:blur(6px);
+}
+.hero-glow.two{
+  inset-inline-end:auto;inset-inline-start:-110px;
+  top:auto;bottom:-160px;
+  background:radial-gradient(circle,rgba(167,139,250,.34),transparent 68%);
+}
+.hero>*:not(.hero-stars):not(.hero-glow){position:relative;z-index:1}
+
+.hero-emoji{font-size:2.5rem;line-height:1;margin-bottom:12px;display:block}
+.hero h1{
+  font-size:clamp(1.35rem,5.2vw,2.05rem);
+  font-weight:800;letter-spacing:-.3px;line-height:1.45;
+}
+.hero p{font-size:clamp(.8rem,3.3vw,1rem);opacity:.86;margin-top:10px}
+
+.hero-chips{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px;
+}
+.hero-chips span{
+  font-size:.72rem;font-weight:600;
+  padding:7px 13px;border-radius:99px;
+  background:rgba(255,255,255,.11);
+  border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(6px);
+  white-space:nowrap;
+}
+
+/* ============ MAIN COURSE CARDS ============ */
+.main-courses{display:flex;flex-direction:column;gap:12px}
+
+.course-card{
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;gap:14px;
+  padding:17px 16px;
+  border-radius:22px;
+  background:#fff;
+  border:1px solid var(--line);
+  text-decoration:none;color:var(--ink);
+  box-shadow:var(--shadow-sm);
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s;
+}
+.course-card::before{
+  content:"";position:absolute;
+  inset-inline-start:0;top:0;bottom:0;width:5px;
+}
+.course-card.beginner::before{background:linear-gradient(180deg,#22c55e,#14b8a6)}
+.course-card.advanced::before{background:linear-gradient(180deg,#f97316,#ef4444)}
+
+.course-icon{
+  width:50px;height:50px;flex:none;
+  display:grid;place-items:center;
+  border-radius:16px;font-size:1.5rem;
+}
+.beginner .course-icon{background:linear-gradient(140deg,#ecfdf5,#d1fae5);border:1px solid #bbf7d0}
+.advanced .course-icon{background:linear-gradient(140deg,#fff7ed,#ffedd5);border:1px solid #fed7aa}
+
+.course-body{flex:1;min-width:0;text-align:start}
+.course-body b{display:block;font-size:1rem;font-weight:800;letter-spacing:-.2px}
+.course-body small{display:block;font-size:.72rem;color:var(--muted);margin-top:4px;font-weight:500}
+
+.course-arrow{
+  flex:none;width:30px;height:30px;border-radius:50%;
+  display:grid;place-items:center;
+  background:#f1f5f9;color:#64748b;
+  font-size:.85rem;
+  transition:transform .25s var(--ease), background .25s, color .25s;
+}
+.course-card:hover .course-arrow,
+.course-card:active .course-arrow{background:#1e5a7a;color:#fff;transform:translateX(-4px)}
+
+/* ============ HELP CTA ============ */
+.help-cta{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:16px 18px;
+  border-radius:20px;
+  text-decoration:none;
+  font-weight:700;font-size:.92rem;
+  color:#92400e;
+  background:linear-gradient(140deg,#fffbeb,#fef3c7);
+  border:1.5px solid #fcd34d;
+  box-shadow:0 10px 24px -18px rgba(245,158,11,.85);
+  transition:transform .25s var(--ease), box-shadow .25s, border-color .25s;
+}
+.help-cta:hover,.help-cta:active{
+  transform:translateY(-2px);
+  border-color:#f59e0b;
+  box-shadow:0 18px 30px -18px rgba(245,158,11,.9);
+}
+.help-cta .em{font-size:1.15rem}
+
+/* ============ SECTION TITLE ============ */
+.sec-head{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:12px;
+  padding-inline-start:12px;
+  border-inline-start:4px solid #1e5a7a;
+}
+.sec-head h2{font-size:1rem;font-weight:800;color:#0c4a6e}
+.sec-head span{font-size:.7rem;color:var(--muted);font-weight:600}
+
+/* ============ GRID OF COURSES ============ */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+
+.chip-card{
+  display:flex;align-items:center;gap:9px;
+  min-height:60px;
+  padding:12px 12px;
+  border-radius:17px;
+  background:#fff;
+  border:1px solid var(--line);
+  text-decoration:none;
+  color:#123253;
+  font-size:.82rem;font-weight:700;line-height:1.4;
+  box-shadow:var(--shadow-sm);
+  transition:transform .22s var(--ease), box-shadow .22s, border-color .22s, background .22s;
+}
+.chip-card .em{font-size:1.05rem;flex:none}
+.chip-card span{min-width:0}
+.chip-card:hover,.chip-card:active{
+  transform:translateY(-3px);
+  border-color:#9ec7e0;
+  background:linear-gradient(140deg,#ffffff,#f0f9ff);
+  box-shadow:var(--shadow-md);
+}
+
+/* ============ TIPS ============ */
+.tips{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:18px 16px 20px;
+  box-shadow:var(--shadow-sm);
+}
+.tips ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.tips li{
+  display:flex;gap:10px;
+  font-size:.83rem;line-height:1.9;
+  color:#334155;
+  background:#f8fafc;
+  border:1px solid #eef3f9;
+  border-radius:15px;
+  padding:12px 13px;
+}
+.tips li .ico{flex:none;font-size:.95rem;line-height:1.9}
+.tips li strong{color:#0c4a6e;font-weight:800}
+.tips code{
+  background:#eef2ff;color:#1e3a5f;
+  font-family:ui-monospace,Consolas,monospace;
+  font-size:.75rem;
+  padding:2px 8px;border-radius:99px;
+  direction:ltr;display:inline-block;
+  white-space:nowrap;
+}
+
+.stamp{
+  margin-top:16px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px;
+  border-radius:99px;
+  font-size:.8rem;font-weight:800;color:#1e4a6e;
+  background:linear-gradient(140deg,#eef2ff,#e0f2fe);
+  border:1px dashed #bfdbfe;
+}
+
+/* ============ FOOTER ============ */
+.footer{
+  text-align:center;
+  padding:20px 16px calc(26px + env(safe-area-inset-bottom));
+  border-top:1px solid rgba(15,40,70,.07);
+  font-size:.72rem;color:#5b708c;line-height:2.1;
+}
+.footer a{
+  color:#1e5a7a;font-weight:800;text-decoration:none;
+  border-bottom:1px dashed #9ec7e0;
+}
+.footer .dot{opacity:.45;margin:0 6px}
+
+/* ============ TO TOP ============ */
+.to-top{
+  position:fixed;
+  inset-inline-start:16px;
+  bottom:calc(18px + env(safe-area-inset-bottom));
+  z-index:90;
+  width:46px;height:46px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(12px);
+  color:#1e5a7a;font-size:1.1rem;font-weight:800;
+  cursor:pointer;
+  box-shadow:var(--shadow-md);
+  opacity:0;visibility:hidden;transform:translateY(12px);
+  transition:opacity .3s, visibility .3s, transform .3s var(--ease), background .2s;
+}
+.to-top.show{opacity:1;visibility:visible;transform:none}
+.to-top:active{background:#e0f2fe;transform:scale(.94)}
+
+/* ============ RESPONSIVE ============ */
+@media (min-width:560px){
+  .grid{grid-template-columns:repeat(3,1fr)}
+  .wrap{padding:22px 20px 40px;gap:24px}
+  .hero{padding:44px 28px 38px;border-radius:30px}
+  .main-courses{flex-direction:row}
+  .course-card{flex:1;flex-direction:column;align-items:flex-start;gap:12px;padding:22px 20px}
+  .course-body b{font-size:1.05rem}
+  .course-arrow{position:absolute;inset-inline-end:18px;bottom:18px}
+}
+
+@media (min-width:900px){
+  .grid{grid-template-columns:repeat(4,1fr)}
+  .tips{padding:24px 22px 26px}
+  .tips li{font-size:.86rem}
+  .chip-card:hover{transform:translateY(-4px)}
+}
+
+@media (hover:none){
+  .course-card:active{transform:scale(.985)}
+  .chip-card:active{transform:scale(.97)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  html{scroll-behavior:auto}
+}
 </style>
 </head>
-<body>
 
-  <!-- صفحه لودینگ -->
-  <div id="loader">
-    <div class="spinner"></div>
-    <div class="loading-text">
-      Astra is loading
-      <span class="dots"><span>.</span><span>.</span><span>.</span></span>
+<body class="is-loading">
+
+<!-- ============ PRELOADER ============ -->
+<div class="loader" id="loader" role="status" aria-live="polite">
+  <div class="loader-stars"></div>
+  <div class="loader-inner">
+    <div class="loader-mark">
+      <div class="loader-ring"></div>
+      <div class="loader-ring rev"></div>
+      <svg class="loader-star" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 1.6l2.7 7.7 7.7 2.7-7.7 2.7L12 22.4l-2.7-7.7L1.6 12l7.7-2.7z" fill="#38bdf8"/>
+      </svg>
     </div>
-    <div class="progress-bar"><div class="fill" id="fill"></div></div>
+    <div class="loader-name">ASTRA</div>
+    <div class="loader-bar"><span></span></div>
+    <div class="loader-sub">در حال آماده‌سازی دوره‌ها…</div>
   </div>
+</div>
 
-  <!-- محتوای اصلی -->
-  <div id="app">
-    <h1>Astra</h1>
-    <p>فعلاً برنامه‌ای براش ندارم، ولی اینجا آماده‌ست که هر وقت خواستی چیزی اضافه کنی.</p>
-  </div>
+<!-- ============ PAGE ============ -->
+<div class="page">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-in">
+      <a class="brand" href="https://mastermath.ir" aria-label="Astra — صفحه اصلی">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 1.6l2.7 7.7 7.7 2.7-7.7 2.7L12 22.4l-2.7-7.7L1.6 12l7.7-2.7z"/></svg>
+        </span>
+        <span class="brand-txt">
+          <b>Astra</b>
+          <small>آموزش ریاضی</small>
+        </span>
+      </a>
+      <div class="top-badge">کنکور ۱۴۰۵</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-stars" aria-hidden="true"></div>
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="hero-glow two" aria-hidden="true"></div>
+
+      <span class="hero-emoji" aria-hidden="true">📚🧮</span>
+      <h1>دوره‌های آموزش ریاضی</h1>
+      <p>مبتدی تا پیشرفته | ویژه کنکور ۱۴۰۵</p>
+
+      <div class="hero-chips">
+        <span>🎯 کنکور</span>
+        <span>📐 حسابان</span>
+        <span>📊 ریاضی</span>
+        <span>📘 نهایی</span>
+      </div>
+    </section>
+
+    <!-- MAIN COURSES -->
+    <section class="main-courses" aria-label="دوره‌های اصلی">
+
+      <a class="course-card beginner" href="https://mastermath.ir/saliane.html">
+        <span class="course-icon" aria-hidden="true">🌟</span>
+        <span class="course-body">
+          <b>سالیانه مبتدی کرمی</b>
+          <small>شروع از پایه • مناسب یادگیری قدم‌به‌قدم</small>
+        </span>
+        <span class="course-arrow" aria-hidden="true">←</span>
+      </a>
+
+      <a class="course-card advanced" href="https://mastermath.ir/spishrafte.html">
+        <span class="course-icon" aria-hidden="true">⚡</span>
+        <span class="course-body">
+          <b>سالیانه پیشرفته کرمی</b>
+          <small>سطح بالا • ویژه تست‌های دشوار کنکور</small>
+        </span>
+        <span class="course-arrow" aria-hidden="true">←</span>
+      </a>
+
+    </section>
+
+    <!-- HELP CTA -->
+    <a class="help-cta" href="https://mastermath.ir/how/">
+      <span class="em" aria-hidden="true">📖</span>
+      راهنمای استفاده از لینک کلاس‌ها
+      <span class="em" aria-hidden="true">🎓</span>
+    </a>
+
+    <!-- OTHER COURSES -->
+    <section aria-label="سایر دوره‌ها">
+      <div class="sec-head">
+        <h2>دوره‌های دیگر</h2>
+        <span>۱۲ دوره</span>
+      </div>
+
+      <div class="grid">
+        <a class="chip-card" href="https://mastermath.ir/finito.html"><span class="em" aria-hidden="true">📘</span><span>فینیتو</span></a>
+        <a class="chip-card" href="https://mastermath.ir/hesaban12nahaii.html"><span class="em" aria-hidden="true">📐</span><span>نهایی حسابان دوازدهم</span></a>
+        <a class="chip-card" href="https://mastermath.ir/minisaliane.html"><span class="em" aria-hidden="true">⭐</span><span>مینی سالیانه</span></a>
+        <a class="chip-card" href="https://mastermath.ir/nahii11.html"><span class="em" aria-hidden="true">📊</span><span>نهایی ریاضی یازدهم</span></a>
+        <a class="chip-card" href="https://mastermath.ir/nahii11hesaban.html"><span class="em" aria-hidden="true">📈</span><span>نهایی حسابان یازدهم</span></a>
+        <a class="chip-card" href="https://mastermath.ir/nokte_test.html"><span class="em" aria-hidden="true">⚡</span><span>نکته و تست</span></a>
+        <a class="chip-card" href="https://mastermath.ir/riazi12nahaii.html"><span class="em" aria-hidden="true">🎯</span><span>نهایی ریاضی دوازدهم</span></a>
+        <a class="chip-card" href="https://mastermath.ir/salaine11.html"><span class="em" aria-hidden="true">📚</span><span>سالیانه یازدهم</span></a>
+        <a class="chip-card" href="https://mastermath.ir/salaine11pish.html"><span class="em" aria-hidden="true">🔥</span><span>پیشرفته یازدهم</span></a>
+        <a class="chip-card" href="https://mastermath.ir/saliane10adi.html"><span class="em" aria-hidden="true">📖</span><span>دهم عادی</span></a>
+        <a class="chip-card" href="https://mastermath.ir/saliane10pish.html"><span class="em" aria-hidden="true">⚡</span><span>دهم پیشرفته</span></a>
+        <a class="chip-card" href="https://mastermath.ir/shrohmehr.html"><span class="em" aria-hidden="true">🍂</span><span>شروع از مهر</span></a>
+      </div>
+    </section>
+
+    <!-- TIPS -->
+    <section class="tips" aria-label="نکات مهم">
+      <div class="sec-head">
+        <h2>چند نکته</h2>
+      </div>
+
+      <ul>
+        <li>
+          <span class="ico" aria-hidden="true">✅</span>
+          <span>هر جلسه شامل <strong>یک یا چند لینک پخش</strong> است — روی دکمه <code>🎬 پخش جلسه</code> کلیک کنید تا ویدئو در مرورگر باز شود.</span>
+        </li>
+        <li>
+          <span class="ico" aria-hidden="true">✅</span>
+          <span>لینک‌های <strong>آپارات</strong> یا <strong>آلفا اسکول</strong> — بدون نیاز به نرم‌افزار اضافی، مستقیم در تب جدید پخش می‌شوند.</span>
+        </li>
+        <li>
+          <span class="ico" aria-hidden="true">✅</span>
+          <span>برای دسترسی راحت‌تر می‌توانید هر بخش را با کلیک روی عنوان آن <strong>باز و بسته کنید</strong> (فقط در صفحات جلسات).</span>
+        </li>
+        <li>
+          <span class="ico" aria-hidden="true">✅</span>
+          <span>توصیه می‌شود جلسات را به ترتیب شماره مطالعه کنید؛ هر مبحث بر اساس سرفصل‌های کنکور منظم شده است.</span>
+        </li>
+        <li>
+          <span class="ico" aria-hidden="true">📌</span>
+          <span><strong>نکته فنی:</strong> در صورت عدم پخش خودکار، از مرورگرهایی مثل Chrome یا Firefox استفاده کنید.</span>
+        </li>
+      </ul>
+
+      <div class="stamp">
+        <span aria-hidden="true">🎯</span>
+        استاد ریاضی — Astra
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div>🔗 لینک‌های کلاس‌ها از آلفا اسکول | برای مرور سریع و آرشیو شخصی</div>
+    <div>
+      <a href="https://mastermath.ir" target="_blank" rel="noopener">mastermath.ir</a>
+      <span class="dot">•</span>
+      <span>Astra</span>
+    </div>
+  </footer>
+
+</div>
+
+<!-- TO TOP -->
+<button class="to-top" id="toTop" type="button" aria-label="بازگشت به بالا">↑</button>
 
 <script>
-  const loader = document.getElementById('loader');
-  const app    = document.getElementById('app');
-  const fill   = document.getElementById('fill');
+(function () {
+  /* ---------- Preloader ---------- */
+  var loader = document.getElementById('loader');
+  var MIN_TIME = 1100;
+  var start = performance.now();
+  var finished = false;
 
-  // شبیه‌سازی لود شدن (می‌تونی با رویداد واقعی window.load جایگزین کنی)
-  let progress = 0;
-  const interval = setInterval(() => {
-    progress += Math.random() * 18 + 6;
-    if (progress >= 100) {
-      progress = 100;
-      fill.style.width = '100%';
-      clearInterval(interval);
-
-      // یه مکث کوتاه بعد از کامل شدن نوار
-      setTimeout(() => {
-        loader.classList.add('hide');
-        app.classList.add('show');
-      }, 400);
-    } else {
-      fill.style.width = progress + '%';
-    }
-  }, 250);
-
-  // نکته: اگه می‌خوای دقیقاً بعد از لود کامل صفحه اجرا بشه،
-  // به‌جای کد بالا از این استفاده کن:
-  /*
-  window.addEventListener('load', () => {
-    fill.style.width = '100%';
-    setTimeout(() => {
+  function finish() {
+    if (finished) return;
+    finished = true;
+    var wait = Math.max(0, MIN_TIME - (performance.now() - start));
+    setTimeout(function () {
       loader.classList.add('hide');
-      app.classList.add('show');
-    }, 400);
+      document.body.classList.remove('is-loading');
+      document.body.classList.add('ready');
+      setTimeout(function () {
+        if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+      }, 700);
+    }, wait);
+  }
+
+  if (document.readyState === 'complete') {
+    finish();
+  } else {
+    window.addEventListener('load', finish);
+  }
+  /* fallback امن */
+  setTimeout(finish, 4000);
+
+  /* ---------- Back to top ---------- */
+  var toTop = document.getElementById('toTop');
+  var ticking = false;
+
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(function () {
+      toTop.classList.toggle('show', window.scrollY > 320);
+      ticking = false;
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  toTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
-  */
+})();
 </script>
 
 </body>
